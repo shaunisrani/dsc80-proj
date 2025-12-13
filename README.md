@@ -393,7 +393,7 @@ Alternate hypothesis: The model is unfair. The accuracy calculated for players f
 
 Again, our test statistic was accuracy, however, this time, focusing on the difference between groups. 
 
-Our result showed a p_value of 0.1728, which is higher than our cutoff of 0.05. From this, we conclude that fail to reject the null hypothesis.
+Our result showed a p_value of 0.1728, which is higher than our cutoff of 0.05. From this, we conclude that we fail to reject the null hypothesis.
 
 
 
