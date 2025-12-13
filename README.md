@@ -237,25 +237,99 @@ We grouped teams into four “vision tiers” based on their wards per minute (W
 
 ## Assessment of Missingness
 
-apdfjpad
+# NMAR Analysis: 
 
-### MAR Analysis
+In our cleaned team‐level dataset, the columns we actually use for modeling (`wardsplaced`, `wpm`, `wcpm`, `controlwardsbought`, `visionscore`, `totalgold`, `dragons`, and `dragons_per_min`) have no missing values for team rows. To study missingness, we therefore focused on the team‐level column **`goldat25`**, which records the total gold a team has at the 25‑minute mark.
 
-goldat25 is missing for about 12% of team rows. Conceptually, this missingness likely happens when the game’s statistics at 25 minutes are not recorded or are undefined (for example, games that end very early, or games in competitions where Oracle’s Elixir did not track 25‑minute stats). In other words, the probability that goldat25 is missing seems to depend on other recorded variables, such as the game’s gamelength or the league, rather than on the (unobserved) value of goldat25 itself.
+`goldat25` is missing for 682 out of 18,292 team rows (about 3.7%). Conceptually, this missingness likely happens when the game’s 25‑minute statistics are not defined or not recorded – for example, in games that end early or in contexts where Oracle’s Elixir does not track 25‑minute snapshots. In other words, the probability that `goldat25` is missing seems to depend on **other recorded variables**, such as the game’s length, rather than on the (unobserved) value of `goldat25` itself.
 
-Because the missingness in goldat25 can be explained using observed variables in the dataset, it is more consistent with Missing At Random (MAR) than Not Missing At Random (NMAR). To make the MAR assumption even more plausible, additional metadata about data collection (e.g. which leagues/patches have 25‑minute stats available) would be helpful; if we had such information, we could model missingness using those observed columns directly.
+Because the missingness in `goldat25` can be explained using observed variables in the dataset, it is more consistent with Missing At Random (MAR) than Not Missing At Random (NMAR). I do not believe `goldat25` is NMAR. To make the MAR assumption even more plausible, additional metadata about data collection (ex: which leagues or patches have 25‑minute stats available, or flags for games that ended before 25 minutes) would be helpful; if we had this information, we could model missingness directly using those observed variables.
 
-Null hypothesis:
-Missingness of goldat25 is independent of game length. The average gamelength_min is the same for rows where goldat25 is missing and where it is observed.
 
-Alternative:
-Missingness of goldat25 depends on game length. The average gamelength_min is different between the two groups.
+# Missingness Dependency:
+Column chosen for missingness analysis:
+We analyzed the missingness of the team‑level column goldat25, which records the total gold a team has at the 25‑minute mark. In our 2025 Oracle’s Elixir team‑level data, goldat25 is missing for 2,316 out of 19,926 team rows (~11.6%), making it a good candidate for assessing missingness patterns. The main columns we use for our main analysis (wardsplaced, wpm, visionscore, dragons, etc.) have no missing values for team rows.
 
-# graph goes here
 
-As our observed value of -10 is far out from the null distribution, therefore, having a p_value of 0, we can reject the null hypothesis. 
+Does missingness of goldat25 depend on game length?
+
+Our first hypothesis was that the missingness of goldat25 depends on the length of the game. Intuitively, statistics at 25 minutes might not be recorded in some games, particularly shorter ones.
+
+Null hypothesis (H₀): Missingness of goldat25 is independent of gamelength_min. The average game length is the same for rows where goldat25 is missing and where it is observed.
+
+Alternative hypothesis (H₁): Missingness of goldat25 depends on gamelength_min. The average game length differs between missing and non‑missing rows.
+
+We created an indicator variable gold25_missing (1 if goldat25 is missing, 0 otherwise) and used the difference in mean gamelength_min between the missing and non‑missing groups as our test statistic. The observed difference was about −2.9 minutes, meaning that games with missing goldat25 are, on average, roughly 2.9 minutes shorter than games with recorded goldat25.
+
+To assess significance, we performed a permutation test with 2,000 shuffles: we repeatedly permuted the gold25_missing labels across teams, recomputed the difference in mean gamelength_min, and built a null distribution. The empirical p‑value (two‑sided) was < 0.001 – none of the permuted differences were as extreme as the observed difference.
+A histogram of the null distribution shows a tight bell‑shaped curve centered near 0, with our observed statistic far out in the tail.
+
+Conclusion: We reject the null hypothesis and conclude that the missingness of goldat25 does depend on game length. Games with missing goldat25 tend to be shorter on average.
+
+(Plot A)
+Blue bars (or whatever color Plotly picks for False) = distribution of game lengths when goldat25 is not missing.
+Orange bars (True) = distribution when goldat25 is missing.
+You should see the “missing” distribution shifted left (shorter games), matching the negative difference in means and tiny p‑value.
+
+
+Does missingness of goldat25 depend on side (Blue vs Red)?
+
+We also tested whether missingness of goldat25 depends on which side the team was on in the game (Blue or Red).
+
+Null hypothesis (H₀): Missingness of goldat25 is independent of side; the proportion of Blue teams is the same in the missing and non‑missing groups.
+
+Alternative hypothesis (H₁): Missingness of goldat25 depends on side; the proportion of Blue teams differs between groups.
+
+We encoded side as a binary variable (side_blue = 1 for Blue, 0 for Red) and again used the difference in group means (equivalently, the difference in the proportion of Blue teams) as our test statistic. The observed difference was essentially 0.0, and a permutation test with 2,000 shuffles yielded a p‑value of approximately 1.0. The cross‑tabulation of gold25_missing and side shows exactly equal counts of Blue and Red teams in both the missing and non‑missing groups.
+
+Conclusion: We fail to reject the null hypothesis and conclude that the missingness of goldat25 does not depend on the team’s side. This makes sense, because goldat25 is recorded (or not) at the game level, and both teams share the same game.
+
+(Plot B)
+The blue histogram is what differences in mean game length look like under the null (when we randomly shuffle the missingness labels).
+The red vertical line is the observed difference (~−10 minutes), far out in the tail → strong evidence of dependence
+
+
+Overall, our analysis suggests that the missingness in goldat25 is not MCAR: it strongly depends on game‑level characteristics like gamelength_min, but not on irrelevant features like side. Since this dependence can be explained using variables in our dataset, we treat the missingness in goldat25 as Missing At Random (MAR) rather than NMAR.
 
 ## Hypothesis Testing
+Hypothesis Test: Do higher warding rates lead to more dragons?
+
+Our main research question is whether teams that invest more in vision control secure more dragons. To formalize this, we used the cleaned team‑level dataset from Step 2 and focused on:
+
+-wpm: wards placed per minute
+-dragons: number of elemental dragons secured by a team in a game
+
+We split teams into two groups based on the median value of wpm:
+
+-High‑WPM group: teams with wpm ≥ median
+-Low‑WPM group: teams with wpm < median
+
+Our goal was to test whether high‑WPM teams tend to secure more dragons than low‑WPM teams.
+
+Null hypothesis (H₀):
+The average number of dragons secured is the same for high‑WPM and low‑WPM teams. Any observed difference in mean dragons is due to random variation.
+
+Alternative hypothesis (H₁):
+High‑WPM teams secure more dragons on average than low‑WPM teams. (One‑sided: mean_dragons_high > mean_dragons_low.)
+
+We used the difference in group means: diff = dragons_high WPM − dragons_low WPM, as our test statistic. This is a natural choice because it directly measures how much more objective control high‑vision teams have, on average.
+
+In the observed data, high‑WPM teams secured about 2.44 dragons per game, while low‑WPM teams secured about 2.00 dragons per game, for an observed difference of: diff ≈ 0.44 dragons.
+
+To assess whether this difference could plausibly arise by chance under the null, we performed a permutation test:
+
+1. We repeatedly (5,000 times) shuffled the high_wpm labels among teams, breaking any real association between warding and dragons while keeping the overall distribution of dragons the same.
+
+2. For each shuffle, we recomputed the difference in mean dragons between the “high” and “low” groups, building a null distribution of the test statistic.
+
+3. The one‑sided p‑value was estimated as the proportion of shuffled differences that were at least as large as the observed difference.
+
+In our simulation, none of the permuted differences were as large as the observed difference of ~0.44 dragons. With 5,000 permutations, this yields a one‑sided p‑value of p < 0.0002 (and a two‑sided p‑value < 0.0004); A histogram of the permutation distribution shows a tight bell‑shaped curve centered near 0, while the observed statistic appears far in the right tail.
+
+(plot c)
+
+Conclusion:
+At the 5% significance level, we reject the null hypothesis and find strong evidence that teams with higher warding rates (higher wpm) secure more dragons on average than teams with lower warding rates. While this test does not prove a causal relationship, it supports the idea that investing in vision is associated with better control of dragon objectives at the professional level.
 
 ## Framing a Prediction Problem
 
