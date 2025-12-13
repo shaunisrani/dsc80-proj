@@ -227,6 +227,7 @@ This histogram shows that as game length increases, so does the number of dragon
   </tbody>
 </table>
 
+We grouped teams into four “vision tiers” based on their wards per minute (WPM) using quartiles. The resulting table shows that as we move from the Low WPM group to the High WPM group, the average number of dragons secured per game and dragons per minute both increase. The high‑vision groups also tend to have higher average vision scores. This aggregated view supports the idea that teams that invest more heavily in vision tend to control more dragons over the course of a game.
 
 ## Assessment of Missingness
 
