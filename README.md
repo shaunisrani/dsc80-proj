@@ -237,7 +237,7 @@ We grouped teams into four “vision tiers” based on their wards per minute (W
 
 ## Assessment of Missingness
 
-# NMAR Analysis: 
+### NMAR Analysis: 
 
 In our cleaned team‐level dataset, the columns we actually use for modeling (`wardsplaced`, `wpm`, `wcpm`, `controlwardsbought`, `visionscore`, `totalgold`, `dragons`, and `dragons_per_min`) have no missing values for team rows. To study missingness, we therefore focused on the team‐level column **`goldat25`**, which records the total gold a team has at the 25‑minute mark.
 
@@ -246,7 +246,7 @@ In our cleaned team‐level dataset, the columns we actually use for modeling (`
 Because the missingness in `goldat25` can be explained using observed variables in the dataset, it is more consistent with Missing At Random (MAR) than Not Missing At Random (NMAR). I do not believe `goldat25` is NMAR. To make the MAR assumption even more plausible, additional metadata about data collection (ex: which leagues or patches have 25‑minute stats available, or flags for games that ended before 25 minutes) would be helpful; if we had this information, we could model missingness directly using those observed variables.
 
 
-# Missingness Dependency:
+### Missingness Dependency:
 Column chosen for missingness analysis:
 We analyzed the missingness of the team‑level column goldat25, which records the total gold a team has at the 25‑minute mark. In our 2025 Oracle’s Elixir team‑level data, goldat25 is missing for 2,316 out of 19,926 team rows (~11.6%), making it a good candidate for assessing missingness patterns. The main columns we use for our main analysis (wardsplaced, wpm, visionscore, dragons, etc.) have no missing values for team rows.
 
