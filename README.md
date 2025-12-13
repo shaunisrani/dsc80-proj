@@ -64,9 +64,21 @@ From the data, we had missingness in columns, wpm, wcpm, cwpm, supvis and supcou
 
 # add dataframe.head here
 
+### Univariate Analysis 
+
 <iframe src="histogram_game_length.html" width=800 height=620 frameBorder=0></iframe>
 
+From this graph, we can see that the average length of a game follows a normal distribution, but is slightly right skewed. 
+
+### Bivariate Analysis
+
+<iframe src="distributionWPMDC.html" width=800 height=620 frameBorder=0></iframe>
+
+This histogram shows that as game length increases, so does the number of dragons secured
+
 ## Assessment of Missingness
+
+
 
 ### MAR Analysis
 
