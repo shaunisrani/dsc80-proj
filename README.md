@@ -328,7 +328,7 @@ To assess whether this difference could plausibly arise by chance under the null
 
 In our simulation, none of the permuted differences were as large as the observed difference of ~0.44 dragons. With 5,000 permutations, this yields a one‑sided p‑value of p < 0.0002 (and a two‑sided p‑value < 0.0004); A histogram of the permutation distribution shows a tight bell‑shaped curve centered near 0, while the observed statistic appears far in the right tail.
 
-(plot c)
+<iframe src="plotc.html" width=800 height=620 frameBorder=0></iframe>
 
 Conclusion:
 At the 5% significance level, we reject the null hypothesis and find strong evidence that teams with higher warding rates (higher wpm) secure more dragons on average than teams with lower warding rates. While this test does not prove a causal relationship, it supports the idea that investing in vision is associated with better control of dragon objectives at the professional level.
