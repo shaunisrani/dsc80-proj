@@ -1,8 +1,8 @@
 # League of Legends Analysis: Wards vs. Dragons
 
-## Introduction
-
 Authors: Shaun Israni, Jared Wang
+
+## Introduction
 
 ### General Introduction
 
