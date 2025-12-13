@@ -349,7 +349,7 @@ In our baseline model, we used a Random Forest Classifier with the features: ```
 
 After fitting a baseline model, our model resulted in a Training Accuracy of ```0.9992```. Out model, however, had a Test Accuracy of ```0.5469```, much lower than the Training Accuracy, suggesting that our model was likely over fitting the data. Based on this low relative test accuracy, we concluded that there was likely room for improvement in this model.
 
-## Step 7: Final Model
+## Final Model
 
 In our final model, we added three new features to the data: ```visionscore```, ```supvis```, and ```supcont```. We chose to vision score to our features as it accounted for how long wards stayed alive, giving an additional metric to the number of wards placed. Additionally, we wanted to include support related data as in the game of Leauge of Legends, the supports typically have the largest impact on vision score. They often purchase dedicated items allowing for them to place more wards and clear opposing wards more easily, and are often tasked with setting up for objectives, which is often associated with the use of control wards.
 
